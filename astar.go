@@ -1,6 +1,8 @@
 package astar
 
-import "container/heap"
+import (
+	"container/heap"
+)
 
 // astar is an A* pathfinding implementation.
 
@@ -9,19 +11,19 @@ import "container/heap"
 type Pather interface {
 	// PathNeighbors returns the direct neighboring nodes of this node which
 	// can be pathed to.
-	PathNeighbors() []Pather
-	// PathNeighbourCost calculates the exact movement cost to neighbor nodes.
-	PathNeighborCost(to Pather) float64
+	PathNeighbors(world interface{}) []Pather
+	// PathNeighbourCost calculates the exact movement Cost to neighbor nodes.
+	PathNeighborCost(world interface{}, to Pather) float64
 	// PathEstimatedCost is a heuristic method for estimating movement costs
 	// between non-adjacent nodes.
-	PathEstimatedCost(to Pather) float64
+	PathEstimatedCost(world interface{}, to Pather) float64
 }
 
 // node is a wrapper to store A* data for a Pather node.
 type node struct {
 	pather Pather
-	cost   float64
-	rank   float64
+	Cost   float64
+	Rank   float64
 	parent *node
 	open   bool
 	closed bool
@@ -31,14 +33,27 @@ type node struct {
 // nodeMap is a collection of nodes keyed by Pather nodes for quick reference.
 type nodeMap map[Pather]*node
 
-// get gets the Pather object wrapped in a node, instantiating if required.
-func (nm nodeMap) get(p Pather) *node {
-	n, ok := nm[p]
+type Pathfinder struct {
+	nodes nodeMap
+	World interface{}
+}
+
+// Public constructor for the Pathfinder struct, initializes the nodes
+func NewPathfinder() (pf *Pathfinder) {
+	return &Pathfinder{
+		nodes: make(nodeMap),
+		World: nil,
+	}
+}
+
+// Get returns the Pather object wrapped in a node, instantiating if required.
+func (pf *Pathfinder) Get(p Pather) *node {
+	n, ok := pf.nodes[p]
 	if !ok {
 		n = &node{
 			pather: p,
 		}
-		nm[p] = n
+		pf.nodes[p] = n
 	}
 	return n
 }
@@ -46,11 +61,10 @@ func (nm nodeMap) get(p Pather) *node {
 // Path calculates a short path and the distance between the two Pather nodes.
 //
 // If no path is found, found will be false.
-func Path(from, to Pather) (path []Pather, distance float64, found bool) {
-	nm := nodeMap{}
+func (pf *Pathfinder) Search(from, to Pather) (path []Pather, distance float64, found bool) {
 	nq := &priorityQueue{}
 	heap.Init(nq)
-	fromNode := nm.get(from)
+	fromNode := pf.Get(from)
 	fromNode.open = true
 	heap.Push(nq, fromNode)
 	for {
@@ -62,7 +76,7 @@ func Path(from, to Pather) (path []Pather, distance float64, found bool) {
 		current.open = false
 		current.closed = true
 
-		if current == nm.get(to) {
+		if current == pf.Get(to) {
 			// Found a path to the goal.
 			p := []Pather{}
 			curr := current
@@ -70,14 +84,14 @@ func Path(from, to Pather) (path []Pather, distance float64, found bool) {
 				p = append(p, curr.pather)
 				curr = curr.parent
 			}
-			return p, current.cost, true
+			return p, current.Cost, true
 		}
 
 
-		for _, neighbor := range current.pather.PathNeighbors() {
-			cost := current.cost + current.pather.PathNeighborCost(neighbor)
-			neighborNode := nm.get(neighbor)
-			if cost < neighborNode.cost {
+		for _, neighbor := range current.pather.PathNeighbors(pf.World) {
+			cost := current.Cost + current.pather.PathNeighborCost(pf.World, neighbor)
+			neighborNode := pf.Get(neighbor)
+			if cost < neighborNode.Cost {
 				if neighborNode.open {
 					heap.Remove(nq, neighborNode.index)
 				}
@@ -85,9 +99,9 @@ func Path(from, to Pather) (path []Pather, distance float64, found bool) {
 				neighborNode.closed = false
 			}
 			if !neighborNode.open && !neighborNode.closed {
-				neighborNode.cost = cost
+				neighborNode.Cost = cost
 				neighborNode.open = true
-				neighborNode.rank = cost + neighbor.PathEstimatedCost(to)
+				neighborNode.Rank = cost + neighbor.PathEstimatedCost(pf.World, to)
 				neighborNode.parent = current
 				heap.Push(nq, neighborNode)
 			}

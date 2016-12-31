@@ -23,7 +23,7 @@ func AddTube(t1, t2 *Truck, cost float64) *Tube {
 	return tube1
 }
 
-// Consider a world with Nodes (Trucks) and Edges (Tubes), Edges each having a cost
+// Consider a world with Nodes (Trucks) and Edges (Tubes), Edges each having a Cost
 // 
 //    E
 //   /|
@@ -34,18 +34,18 @@ func AddTube(t1, t2 *Truck, cost float64) *Tube {
 // E=End at (1,1)
 // M=Middle at (0,1)
 // 
-// S-M and M-E are clean clear tubes. cost: 1
+// S-M and M-E are clean clear tubes. Cost: 1
 // 
 // S-E is either:
 // 
-// 1) TestGraphPath_ShortDiagonal : diagonal is a nice clean clear Tube , cost: 1.9
+// 1) TestGraphPath_ShortDiagonal : diagonal is a nice clean clear Tube , Cost: 1.9
 //    Solver should traverse the bridge.
-//    Expect solution: Start, End  Total cost: 1.9
+//    Expect solution: Start, End  Total Cost: 1.9
 // 
 // 1) TestGraphPath_LongDiagonal : diagonal is a Tube plugged full of
-//    "enormous amounts of material"!, cost: 10000.
+//    "enormous amounts of material"!, Cost: 10000.
 //    Solver should avoid the plugged tube.
-//    Expect solution Start,Middle,End  Total cost: 2.0
+//    Expect solution Start,Middle,End  Total Cost: 2.0
 
 func createGorelandGraphPath_Diagonal(t *testing.T, diagonal_cost float64, expectedDist float64) {
 
@@ -59,9 +59,10 @@ func createGorelandGraphPath_Diagonal(t *testing.T, diagonal_cost float64, expec
 	AddTube(tr_start, tr_mid, 1)
 	AddTube(tr_mid, tr_end, 1)
 
-	t.Logf("Goreland.  Diagonal cost: %v\n\n", diagonal_cost)
+	t.Logf("Goreland.  Diagonal Cost: %v\n\n", diagonal_cost)
 
-	p, dist, found := Path(tr_start, tr_end)
+	pf := NewPathfinder()
+	p, dist, found := pf.Search(tr_start, tr_end)
 
 	if !found {
 		t.Log("Could not find a path")

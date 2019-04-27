@@ -11,11 +11,11 @@ import (
 
 // Kind* constants refer to tile kinds for input and output.
 const (
-	// KindPlain (.) is a plain tile with a movement cost of 1.
+	// KindPlain (.) is a plain tile with a movement Cost of 1.
 	KindPlain = iota
-	// KindRiver (~) is a river tile with a movement cost of 2.
+	// KindRiver (~) is a river tile with a movement Cost of 2.
 	KindRiver
-	// KindMountain (M) is a mountain tile with a movement cost of 3.
+	// KindMountain (M) is a mountain tile with a movement Cost of 3.
 	KindMountain
 	// KindBlocker (X) is a tile which blocks movement.
 	KindBlocker
@@ -70,7 +70,7 @@ type Tile struct {
 
 // PathNeighbors returns the neighbors of the tile, excluding blockers and
 // tiles off the edge of the board.
-func (t *Tile) PathNeighbors() []Pather {
+func (t *Tile) PathNeighbors(world interface{}) []Pather {
 	neighbors := []Pather{}
 	for _, offset := range [][]int{
 		{-1, 0},
@@ -86,15 +86,15 @@ func (t *Tile) PathNeighbors() []Pather {
 	return neighbors
 }
 
-// PathNeighborCost returns the movement cost of the directly neighboring tile.
-func (t *Tile) PathNeighborCost(to Pather) float64 {
+// PathNeighborCost returns the movement Cost of the directly neighboring tile.
+func (t *Tile) PathNeighborCost(world interface{}, to Pather) float64 {
 	toT := to.(*Tile)
 	return KindCosts[toT.Kind]
 }
 
 // PathEstimatedCost uses Manhattan distance to estimate orthogonal distance
 // between non-adjacent nodes.
-func (t *Tile) PathEstimatedCost(to Pather) float64 {
+func (t *Tile) PathEstimatedCost(world interface{}, to Pather) float64 {
 	toT := to.(*Tile)
 	absX := toT.X - t.X
 	if absX < 0 {

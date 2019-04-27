@@ -11,7 +11,7 @@ package astar
 // 
 // Ok, it is basically just a Graph.
 // Nodes are called "Trucks" and they have X, Y coordinates
-// Edges are called "Tubes", they connect Trucks, and they have a cost
+// Edges are called "Tubes", they connect Trucks, and they have a Cost
 // 
 // The key differences between this example and the Tile world:
 // 1) There is no grid.  Trucks have arbitrary coordinates.
@@ -45,7 +45,7 @@ type Truck struct {
 }
 
 // PathNeighbors returns the neighbors of the Truck
-func (t *Truck) PathNeighbors() []Pather {
+func (t *Truck) PathNeighbors(world interface{}) []Pather {
 
 	neighbors := []Pather{}
 
@@ -55,8 +55,8 @@ func (t *Truck) PathNeighbors() []Pather {
 	return neighbors
 }
 
-// PathNeighborCost returns the cost of the tube leading to Truck.
-func (t *Truck) PathNeighborCost(to Pather) float64 {
+// PathNeighborCost returns the Cost of the tube leading to Truck.
+func (t *Truck) PathNeighborCost(world interface{}, to Pather) float64 {
 
 	for _, tube_element := range (t).out_to {
 		if Pather((tube_element.to)) == to {
@@ -68,7 +68,7 @@ func (t *Truck) PathNeighborCost(to Pather) float64 {
 
 // PathEstimatedCost uses Manhattan distance to estimate orthogonal distance
 // between non-adjacent nodes.
-func (t *Truck) PathEstimatedCost(to Pather) float64 {
+func (t *Truck) PathEstimatedCost(world interface{}, to Pather) float64 {
 
 	toT := to.(*Truck)
 	absX := toT.X - t.X

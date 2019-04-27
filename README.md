@@ -16,9 +16,9 @@ The following crude examples were taken directly from the automated tests.  Plea
 
 ### Key
 
-*   `.` - Plain (movement cost 1)
-*   `~` - River (movement cost 2)
-*   `M` - Mountain (movement cost 3)
+*   `.` - Plain (movement Cost 1)
+*   `~` - River (movement Cost 2)
+*   `M` - Mountain (movement Cost 3)
 *   `X` - Blocker, unable to move through
 *   `F` - From / start position
 *   `T` - To / goal position
@@ -99,7 +99,7 @@ An example implementation is done for the tests in `path_test.go` for the Tile t
 
 The `PathNeighbors` method should return a slice of the direct neighbors.
 
-The `PathNeighborCost` method should calculate an exact movement cost for direct neighbors.
+The `PathNeighborCost` method should calculate an exact movement Cost for direct neighbors.
 
 The `PathEstimatedCost` is a heuristic method for estimating the distance between arbitrary tiles.  The examples in the test files use [Manhattan distance](http://en.wikipedia.org/wiki/Taxicab_geometry) to estimate orthogonal distance between tiles.
 

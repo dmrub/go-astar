@@ -78,10 +78,17 @@ func (pf *Pathfinder) Search(from, to Pather) (path []Pather, distance float64, 
 
 		if current == pf.Get(to) {
 			// Found a path to the goal.
-			p := []Pather{}
 			curr := current
+			count := 0
 			for curr != nil {
-				p = append(p, curr.pather)
+				count++
+				curr = curr.parent
+			}
+
+			p := make([]Pather, count)
+			curr = current
+			for i := count - 1; i >= 0; i-- {
+				p[i] = curr.pather
 				curr = curr.parent
 			}
 			return p, current.Cost, true

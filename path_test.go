@@ -12,7 +12,7 @@ import "testing"
 func testPath(worldInput string, t *testing.T, expectedDist float64) {
 	world := ParseWorld(worldInput)
 	t.Logf("Input world\n%s", world.RenderPath([]Pather{}))
-	pf := NewPathfinder()
+	pf := NewPathfinder(nil)
 	p, dist, found := pf.Search(world.From(), world.To())
 	if !found {
 		t.Log("Could not find a path")
@@ -125,6 +125,6 @@ F............................~.................................................
 ...............................................X...~.......M.........X...X...XT
 `)
 	for i := 0; i < b.N; i++ {
-		NewPathfinder().Search(world.From(), world.To())
+		NewPathfinder(nil).Search(world.From(), world.To())
 	}
 }

@@ -39,10 +39,10 @@ type Pathfinder struct {
 }
 
 // Public constructor for the Pathfinder struct, initializes the nodes
-func NewPathfinder() (pf *Pathfinder) {
+func NewPathfinder(world interface{}) (pf *Pathfinder) {
 	return &Pathfinder{
 		nodes: make(nodeMap),
-		World: nil,
+		World: world,
 	}
 }
 

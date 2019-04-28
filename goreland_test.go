@@ -61,7 +61,7 @@ func createGorelandGraphPath_Diagonal(t *testing.T, diagonal_cost float64, expec
 
 	t.Logf("Goreland.  Diagonal Cost: %v\n\n", diagonal_cost)
 
-	pf := NewPathfinder()
+	pf := NewPathfinder(nil)
 	p, dist, found := pf.Search(tr_start, tr_end)
 
 	if !found {
